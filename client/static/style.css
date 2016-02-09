@@ -1,0 +1,58 @@
+* {
+	/*font-family: arial, sans-serif;*/
+	font-family: monaco;
+	font-size: 12pt;
+}
+#topnav{
+	margin-top: 30px;
+	margin-left: 40px;
+	
+}
+a {
+	font-size: 10pt;
+	margin-top: 30px;
+}
+
+#container{
+	margin-left: 50px;
+	width: 900px;
+}
+#adder{
+	width: 600px;
+	margin-left: 30px;
+}
+#first_input{
+	width: 180px;
+}
+#first_input, #enter, #cust{
+	display: inline-block;
+}
+#enter{
+	
+}
+#search{
+	width: 130px;
+	margin-left: 700px;
+}
+#customer{
+	width: 200px;
+}
+#cust, #customer{
+	display: inline-block;
+}
+#order_qty {
+	width: 50px;
+}
+#order_name{
+	width: 200px;
+}
+
+#order, #order_qty, #order_name{
+	display: inline-block;
+}
+#container2{
+	width: 700px;
+}
+#order_sub{
+	margin-left: 250px;
+}

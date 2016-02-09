@@ -1,0 +1,67 @@
+<div ng-controller='OrdersController' id='container'>
+       <br>
+        <u>Add a new order</u>
+        <br>
+         <br>
+         <!-- <select ng-model="selected" ng-options="customer.name for customer in customers track by customer.name"></select> -->
+                
+         <!-- <span  ng-init='count += 1'></span> -->
+       
+        <div class="form-group" id='selection' >
+         <!--  <form >  -->
+            <span ng-repeat="customer in customers"></span>
+              <span id='cust' >Customer Name: </span>
+              <select class="form-control" id="customer" ng-model='new_order.customer_name'>
+                <option value="">--SELECT--</option>
+                 <option ng-repeat='customer in customers' id='customer_name'>{{customer.name}}</option>
+                
+              </select > 
+              </button>
+    
+              <br> 
+               
+              <br >
+              <span id="order"> Qty: </span><select class="form-control" id="order_qty" ng-model='new_order.order_qty'>
+                  <option value="">--SELECT--</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+              </select> 
+              <select class="form-control" id="order_name" ng-model='new_order.order_name' >
+                <option value="">--SELECT--</option>
+                <option>Nike Shoes</option>
+                <option>Bike</option>
+                <option>iPod</option>
+                <option>Computer</option>
+              </select> 
+              <br>
+              <br>
+               <input type='submit' value='order' id='order_sub' ng-click='addOrder()' class="btn btn-success">
+
+           <!--  </form> -->
+        </div>
+
+      <div class="container2">       
+          <table class="table table-striped">
+            <input type='text' id='search' class="form-control" placeholder='filter...' ng-model="filter_name"/>
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="order in orders | filter:filter_name | orderBy:'customer_name' ">
+                <td > {{order.customer_name}} </td>
+                 <td > {{order.order_name}} </td>
+                  <td > {{order.order_qty}} </td>
+                   <td > {{order.order_date}} </td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+    </div>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="customers_app">
+  <head>
+  	<title>Orders and Customers</title>
+      <meta name="description" content="WS">
+  	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<!-- 
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+   <script src="https://code.angularjs.org/1.3.15/angular-route.min.js"></script>
+ -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+
+
+
+    <link rel="stylesheet" href="/style.css" type="text/css">
+
+    <script>
+    	var customers_app = angular.module('customers_app', ['ngRoute']);
+
+      customers_app.factory('OrderFactory', function($http) {
+          var factory = {};
+          var orders = [];
+
+          factory.getOrders = function(callback) {
+          $http.get('/getOrders').success(function(output) {
+            console.log('back from getOrders in Factory');
+            orders = output;
+            callback(orders);
+            }) 
+          }
+
+          factory.addOrder = function(info, callback) {
+          console.log('new order in factory',info);
+          // {order_name: info.order_name, order_qty: info.order_qty, customer_name: info.customer_name}
+          $http.post('/addOrder', info).success(function() {
+           console.log('back from adding order');
+           callback();
+          }) 
+          }
+          return factory;
+        });
+
+      customers_app.factory('CustomerFactory', function($http) {
+          var factory = {};
+          var customers = [];
+
+          factory.getCustomers = function(callback) {
+          $http.get('/getCustomers').success(function(output) {
+            console.log('back from getCustomers in Factory');
+            customers = output;
+            callback(customers);
+            }) 
+          }
+
+          factory.addCustomer = function(info, callback) {
+          console.log('new customer',info.name);
+          $http.post('/addCustomer', {name: info.name}).success(function() {
+           console.log('back from adding customer');
+           callback();
+          }) 
+          }
+          factory.removeCustomer = function(info,callback) {
+            console.log('removeCustomer in Factory', info._id);
+            $http.post('removeCustomer', {_id: info._id}).success(function() {
+            console.log('back from removing customer');
+            callback();
+              })
+          }
+          return factory;
+        });
+
+      customers_app.controller('OrdersController', function($scope, $routeParams, OrderFactory) {
+        OrderFactory.getOrders(function(data) {
+          console.log('in OrdersController back from factory',data);
+          $scope.orders = data;
+        }); 
+
+        $scope.addOrder = function() {
+          console.log('in addOrder controller', $scope.new_order);
+          OrderFactory.addOrder($scope.new_order, function() {
+            console.log('back from addOrder Factory');
+            $scope.orders = OrderFactory.getOrders(function(data){
+              $scope.orders = data;
+              });
+            });
+        }
+      });
+
+      customers_app.controller('CustomersController', function($scope, CustomerFactory) {
+        CustomerFactory.getCustomers(function(data) {
+          console.log('in CustomerController back from factory');
+          $scope.customers = data;
+        }); 
+
+        $scope.addCustomer = function() {
+          console.log('in addPeople controller');
+          CustomerFactory.addCustomer($scope.new_customer, function() {
+            console.log('back from addCustomer');
+            $scope.customers = CustomerFactory.getCustomers(function(data){
+              $scope.customers = data;
+              });
+            });
+        }
+         $scope.removeCustomer = function(customer) {
+          console.log('about to remove',customer);
+          CustomerFactory.removeCustomer(customer, function() {
+            console.log('back from remove customer, customer is gone.');
+            $scope.customers = CustomerFactory.getCustomers(function(data) {
+              $scope.customers = data;
+            });
+            });
+        }
+        $scope.verifyDuplicate = function() {
+        var sorted, i;
+        
+        sorted = $scope.customers.concat().sort(function (a, b) {
+            if (a.name > b.name) return 1;
+            if (a.name < b.name) return -1;
+            return 0;
+        });
+        for(i = 0; i < $scope.customers.length; i++) {
+            sorted[i].isDuplicate = ((sorted[i-1] && sorted[i-1].name == sorted[i].name) || (sorted[i+1] && sorted[i+1].name == sorted[i].name));
+          }
+        };
+
+      });
+      
+      customers_app.config(function ($routeProvider) {
+        $routeProvider
+            .when('/',{
+                templateUrl: 'partials/customers.html'
+            })
+            .when('/partial2',{
+                templateUrl: 'partials/orders.html'
+            })
+            .otherwise({
+              redirectTo: '/'
+            });
+        });
+      </script>
+<body ng-controller='CustomersController'>
+  <br>
+  <span id="topnav"><a href="#/" >Customers</a> | <a href="#/partial2">Orders</a></span>
+  <div ng-view="">
+          </div>
+  </body>
+  </html>  
